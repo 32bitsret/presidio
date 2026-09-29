@@ -1,16 +1,18 @@
 import pytest
+from presidio_analyzer.predefined_recognizers import FrNirRecognizer
 
 from tests import assert_result
-from presidio_analyzer.predefined_recognizers import FrNirRecognizer
 
 
 @pytest.fixture(scope="module")
 def recognizer():
+    """Return an instance of the FrNirRecognizer."""
     return FrNirRecognizer()
 
 
 @pytest.fixture(scope="module")
 def entities():
+    """Return entities to analyze."""
     return ["FR_NIR"]
 
 
@@ -50,6 +52,7 @@ def entities():
 def test_when_nir_in_text_then_all_fr_nirs_are_found(
     text, expected_len, expected_positions, recognizer, entities, max_score
 ):
+    """Test that valid NIRs are found where expected and invalid ones are not."""
     results = recognizer.analyze(text, entities)
     assert len(results) == expected_len
     for res, (st_pos, fn_pos) in zip(results, expected_positions):
@@ -74,4 +77,5 @@ def test_when_nir_in_text_then_all_fr_nirs_are_found(
     ],
 )
 def test_validate_result_checksum(nir, expected, recognizer):
+    """Test the INSEE checksum validation on well-formed and malformed NIRs."""
     assert recognizer.validate_result(nir) is expected
